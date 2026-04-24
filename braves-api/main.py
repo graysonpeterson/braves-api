@@ -1,8 +1,16 @@
 from fastapi import FastAPI
 import httpx
 from datetime import date, timedelta
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 BRAVES_TEAM_ID = 144
 MLB_API_BASE = "https://statsapi.mlb.com/api/v1"
