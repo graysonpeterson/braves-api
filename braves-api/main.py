@@ -1,7 +1,11 @@
 from fastapi import FastAPI
 import httpx
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
+import pytz
 from fastapi.middleware.cors import CORSMiddleware
+
+eastern = pytz.timezone('America/New_York')
+
 
 app = FastAPI()
 
@@ -16,7 +20,7 @@ BRAVES_TEAM_ID = 144
 MLB_API_BASE = "https://statsapi.mlb.com/api/v1"
 
 async def get_todays_game():
-    today = date.today().isoformat()
+    today = datetime.now(eastern).date().isoformat()
     url = f"{MLB_API_BASE}/schedule?teamId={BRAVES_TEAM_ID}&date={today}&sportId=1"
 
     async with httpx.AsyncClient() as client:
@@ -29,10 +33,10 @@ async def get_todays_game():
     return data["dates"][0]["games"][0]
 
 async def get_last10_games():
-    today_as_day = date.today().day
+    today_as_day = datetime.now(eastern).date().day
     last10_list = []
     for i in range(1,11):
-        formatted_date = date.today() - timedelta(days=i)
+        formatted_date = datetime.now(eastern).date() - timedelta(days=i)
         url = f"{MLB_API_BASE}/schedule?teamId={BRAVES_TEAM_ID}&date={formatted_date}&sportId=1"
 
         async with httpx.AsyncClient() as client:
@@ -47,10 +51,10 @@ async def get_last10_games():
 
 # return the next game whose status is Preview.
 async def get_next_game():
-    today_as_day = date.today().day
+    today_as_day = datetime.now(eastern).day
     i = 0
     while i <= 7:
-        formatted_date = date.today() + timedelta(days=i)
+        formatted_date = datetime.now(eastern).date() + timedelta(days=i)
         url = f"{MLB_API_BASE}/schedule?teamId={BRAVES_TEAM_ID}&date={formatted_date}&sportId=1"
 
         async with httpx.AsyncClient() as client:
@@ -106,6 +110,7 @@ async def today():
     parsed = parse_game(game)
 
     if parsed["status"] != "Final":
+        print(parsed["status"])
         return {
             "display": f"Game not final yet. Status: {parsed['status']}",
             "result": "in_progress",
