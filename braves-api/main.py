@@ -110,7 +110,6 @@ async def today():
     parsed = parse_game(game)
 
     if parsed["status"] != "Final":
-        print(parsed["status"])
         return {
             "display": f"Game not final yet. Status: {parsed['status']}",
             "result": "in_progress",
