@@ -4,7 +4,7 @@ from datetime import date, timedelta, datetime
 import pytz
 from fastapi.middleware.cors import CORSMiddleware
 
-eastern = pytz.timezone('America/New_York')
+eastern = pytz.timezone('US/Pacific')
 
 
 app = FastAPI()
